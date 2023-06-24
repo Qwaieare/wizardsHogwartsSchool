@@ -22,10 +22,12 @@ public class StudentService {
     public Student get(Long id){
         return students.get(id);
     }
+
     // получить набор всех значений
     public Collection<Student> getAllStudents(){
         return students.values();
     }
+
     // получить студентов по возрасту
     public Collection<Student> getStudentsByAge(int age){
         return students
@@ -45,4 +47,5 @@ public class StudentService {
     public Student delete(Long id){
         return students.remove(id);
     }
+
 }

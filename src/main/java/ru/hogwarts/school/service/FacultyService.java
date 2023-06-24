@@ -27,7 +27,12 @@ public class FacultyService {
     }
 
     public Collection<Faculty> getFacultiesByColor(String color){
-        return faculties.values().stream().filter(f -> f.getColor().equals(color)).collect(Collectors.toSet());
+        return faculties
+                .values()
+                .stream()
+                .filter(f -> f.getColor()
+                .equals(color))
+                .collect(Collectors.toSet());
     }
 
     public Faculty edit (Faculty faculty) {
@@ -38,4 +43,5 @@ public class FacultyService {
     public Faculty delete(Long id){
         return faculties.remove(id);
     }
+
 }
