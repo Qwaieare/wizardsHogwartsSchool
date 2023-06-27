@@ -1,10 +1,25 @@
 package ru.hogwarts.school.model;
 
+import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
 import java.util.Objects;
 
+// Класс является сущностью
+@Entity
+@Table(name="Faculty")
+@NoArgsConstructor
 public class Faculty {
+    // Поле первичного ключа
+    @Id
+    @GeneratedValue  // Автоинкремент
+    @Column(name="id", nullable = false)
     private Long id;
+
+    @Column(name = "name", nullable = false)
     private String  name;
+
+    @Column(name = "color", nullable = false)
     private String color;
 
     public Faculty(Long id, String name, String color) {
@@ -25,7 +40,7 @@ public class Faculty {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName() {
         this.name = name;
     }
 
@@ -33,7 +48,7 @@ public class Faculty {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor() {
         this.color = color;
     }
 

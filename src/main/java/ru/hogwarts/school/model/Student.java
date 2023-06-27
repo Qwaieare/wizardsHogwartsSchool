@@ -1,10 +1,25 @@
 package ru.hogwarts.school.model;
 
+import lombok.NoArgsConstructor;
+import javax.persistence.*;
 import java.util.Objects;
 
+// Класс является сущностью
+// В БД отображается в таблицу с именем students
+@Entity
+@Table(name = "Student")
+@NoArgsConstructor
 public class Student {
+    // Поле первичного ключа
+    @Id
+    @GeneratedValue     // Автоинкремент
+    @Column(name = "id", nullable = false)
     private Long id;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "age", nullable = false)
     private int age;
 
     public Student(Long id, String name, int age) {
@@ -25,7 +40,7 @@ public class Student {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName() {
         this.name = name;
     }
 
@@ -33,7 +48,7 @@ public class Student {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge() {
         this.age = age;
     }
 
