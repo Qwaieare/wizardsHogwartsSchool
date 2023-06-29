@@ -1,54 +1,71 @@
 package ru.hogwarts.school.service;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.dto.FacultyDTO;
 import ru.hogwarts.school.exceptions.NoSuchMusicEndpointException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class FacultyService {
-//    private Map<Long, Faculty> faculties = new HashMap<>();
-//    private Long nextId = 0l;
      private final FacultyRepository facultyRepository;
-     public FacultyService(FacultyRepository facultyRepository) {
-        this.facultyRepository = facultyRepository;
-    }
+    private final StudentRepository studentRepository;
 
-    // создание объекта: вызываем метод save в репозитории и передаём туда объект
-    public Faculty add(Faculty faculty){
-        return facultyRepository.save(faculty);
-    }
-
-    // получить объект по ключу из репозитория
-    public Faculty get(Long id) {
-        return facultyRepository.findById(id)
-                .orElseThrow(() -> new NoSuchMusicEndpointException("faculty"));
-    }
-
-    // получить набор всех значений
-    public Collection<Faculty> allFaculties(){
-        return facultyRepository.findAll();
-    }
-
-    // получить факультет по цвету
-    public Collection<Faculty> getFacultiesByColor(String color){
-        return facultyRepository.findByColor(color);
+    // создание объекта
+    public FacultyDTO createFaculty(FacultyDTO facultyDTO) {
+        facultyRepository.save(facultyDTO.toFaculty());
+        return facultyDTO;
     }
 
     // изменение объекта
-    public Faculty edit (Long id, Faculty faculty) {
-        return facultyRepository.findById(id)
-                .map(faculties -> {
-                    faculty.setName();
-                    faculty.setColor();
-                    return facultyRepository.save(faculty);
-                })
-                .orElseThrow( () -> new NoSuchMusicEndpointException("Can't update faculty: no such faculty"));
+    public FacultyDTO updateFaculty(FacultyDTO facultyDTO) {
+        facultyRepository.save(facultyDTO.toFaculty());
+        return facultyDTO;
+    }
+
+    // все факультеты
+    public List<FacultyDTO> findAllFaculties() {
+        List<Faculty> faculties = facultyRepository.findAll();
+        List<FacultyDTO> facultyDTOS = new ArrayList<>();
+        for (Faculty faculty : faculties) {
+            FacultyDTO facultyDTO = FacultyDTO.fromFaculty(faculty);
+            facultyDTOS.add(facultyDTO);
+        }
+        return facultyDTOS;
+    }
+
+    // получить объект по ключу из репозитория
+    public FacultyDTO findFacultyById(long id) {
+        Faculty faculty = facultyRepository.findFacultyById(id);
+        return FacultyDTO.fromFaculty(faculty);
+    }
+
+    // получить факультет по цвету
+    public List<FacultyDTO> findByColor(String color) {
+        List<Faculty> faculties = facultyRepository.findByColor();
+        List<FacultyDTO> facultyDTOS = new ArrayList<>();
+        for (Faculty faculty : faculties) {
+            FacultyDTO facultyDTO = FacultyDTO.fromFaculty(faculty);
+            facultyDTOS.add(facultyDTO);
+        }
+        return facultyDTOS;
+    }
+
+    public FacultyDTO findFacultyByNameIgnoreCase(String name) {
+        Faculty faculty = facultyRepository.findFacultyByNameIgnoreCase(name);
+        return FacultyDTO.fromFaculty(faculty);
+    }
+
+    public FacultyDTO findFacultyByStudentId(Long studentId) {
+        Faculty faculty = facultyRepository.findFacultyById(studentRepository
+                .findById(studentId).get().getFaculty().getId());
+        return FacultyDTO.fromFaculty(faculty);
     }
 
     // удаление из карты

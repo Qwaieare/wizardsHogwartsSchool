@@ -1,64 +1,92 @@
 package ru.hogwarts.school.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.exceptions.NoSuchMusicEndpointException;
+import ru.hogwarts.school.dto.StudentDTO;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
+import static ru.hogwarts.school.dto.StudentDTO.fromStudent;
 
 @Service
+@AllArgsConstructor
 public class StudentService {
-//    private Map<Long, Student> students = new HashMap<>();
-//    private Long nextId = 0l;
-
     private StudentRepository studentRepository;
-    public StudentService(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
-    }
 
-    // создание объекта: вызываем метод save в репозитории и передаём туда объект
-    public Student add(Student student) {
-        return studentRepository.save(student);
-    }
-
-    // получить объект по ключу из репозитория
-    public Student get(Long id) {
-        return studentRepository.findById(id)
-                .orElseThrow(() -> new NoSuchMusicEndpointException("student"));
-    }
-
-    // получить набор всех значений
-    public Collection<Student> getAllStudents() {
-        return studentRepository.findAll();
-    }
-
-    // получить студентов по возрасту
-    public Collection<Student> getStudentsByAge(int age) {
-        return studentRepository.findByAge(age);
+    // создание объекта
+       public StudentDTO createStudent(StudentDTO studentDTO) {
+        studentRepository.save(studentDTO.toStudent());
+        return studentDTO;
     }
 
     // изменение объекта
-    // Если мы хотим отредактировать существующую запись,
-    // то мы берём её из репозитория, записываем в неё все обновлённые данные
-    // и сохраняем обратно в репозитирий.
-    public Student edit(Long id, Student student) {
-        return studentRepository.findById(id)
-                .map(students -> {
-                    student.setName();
-                    student.setAge();
-                    return studentRepository.save(student);
-                })
-                .orElseThrow( () -> new NoSuchMusicEndpointException("Can't update student: no such student"));
+    public StudentDTO updateStudent(StudentDTO studentDTO) {
+        studentRepository.save(studentDTO.toStudent());
+        return studentDTO;
     }
 
+    // найти объект по ключу из репозитория
+    public StudentDTO findStudentById(Long studentId) {
+        Student student = studentRepository.findById(studentId).get();
+        return fromStudent(student);
+    }
+
+    // получить список всех студентов
+    public List<StudentDTO> findAllStudents() {
+        List<Student> students = studentRepository.findAll();
+        List<StudentDTO> studentDTOs = new ArrayList<>();
+        for (Student student : students) {
+            StudentDTO studentDTO = StudentDTO.fromStudent(student);
+            studentDTOs.add(studentDTO);
+        }
+        return studentDTOs;
+    }
+
+    // получить студентов по возрасту
+    public List<StudentDTO> findStudentByAge(int age) {
+        List<Student> studentByAge = studentRepository.findByAge(age);
+        List<StudentDTO> studentDTOByAge = new ArrayList<>();
+        for (Student student : studentByAge) {
+            StudentDTO studentDTO = StudentDTO.fromStudent(student);
+            studentDTOByAge.add(studentDTO);
+        }
+        return studentDTOByAge;
+    }
+
+        // получить всех студентов, возраст которых находится в промежутке
+        public List<StudentDTO> findStudentByAgeBetween(int min, int max) {
+            List<Student> studentBetween = studentRepository.findStudentByAgeBetween(min, max);
+            List<StudentDTO> studentDTOBetween = new ArrayList<>();
+            for (Student student : studentBetween) {
+                StudentDTO studentDTO = StudentDTO.fromStudent(student);
+                studentDTOBetween.add(studentDTO);
+            }
+            return studentDTOBetween;
+        }
+
+        // найти студента по факультету
+        public List<StudentDTO> findStudentByFacultyId(long facultyId) {
+            List<Student> studentByFacultyId = studentRepository.findStudentByFaculty_Id(facultyId);
+            List<StudentDTO> studentDTOByFacultyId = new ArrayList<>();
+            for (Student student : studentByFacultyId) {
+                StudentDTO studentDTO = StudentDTO.fromStudent(student);
+                studentDTOByFacultyId.add(studentDTO);
+            }
+            return studentDTOByFacultyId;
+        }
+
+
     // удаление из карты
-    public void delete(Long id) {
-        studentRepository.findById(id).orElseThrow(() -> new NoSuchMusicEndpointException("Student"));
-        studentRepository.deleteById(id);
+    public void delete(long id)  throws IllegalStateException {
+            List<Student> studentDelete = studentRepository.deleteById();
+            List<StudentDTO> studentDTODelete = new ArrayList<>();
+            for (StudentDTO student : studentDTODelete) {
+                StudentDTO studentDTO = StudentDTO.fromStudent(student.toStudent());
+                studentDTODelete.remove(studentDTO);
+            }
     }
 
 }

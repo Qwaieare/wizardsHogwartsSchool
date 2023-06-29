@@ -5,10 +5,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.hogwarts.school.model.Faculty;
 
-import java.util.Collection;
+import java.util.List;
 
 @Repository
 public interface FacultyRepository extends JpaRepository<Faculty, Long>  {
     @Query(nativeQuery = true)
-    Collection<Faculty> findByColor(String color);
+    List<Faculty> findByColor();
+    Faculty findFacultyByNameIgnoreCase(String name);
+    Faculty findFacultyById(Long studentId);
 }

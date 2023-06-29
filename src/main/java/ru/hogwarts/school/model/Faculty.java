@@ -1,18 +1,24 @@
 package ru.hogwarts.school.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 // Класс является сущностью
 @Entity
 @Table(name="Faculty")
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Faculty {
     // Поле первичного ключа
     @Id
-    @GeneratedValue  // Автоинкремент
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id", nullable = false)
     private Long id;
 
@@ -22,46 +28,8 @@ public class Faculty {
     @Column(name = "color", nullable = false)
     private String color;
 
-    public Faculty(Long id, String name, String color) {
-        this.id = id;
-        this.name = name;
-        this.color = color;
-    }
+    @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL)
+    private Collection<Student> students;
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName() {
-        this.name = name;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor() {
-        this.color = color;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Faculty faculty = (Faculty) o;
-        return Objects.equals(id, faculty.id) && Objects.equals(name, faculty.name) && Objects.equals(color, faculty.color);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, color);
-    }
 }
