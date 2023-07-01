@@ -1,6 +1,7 @@
 package ru.hogwarts.school.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.dto.StudentDTO;
@@ -20,9 +21,9 @@ public class StudentController {
     }
 
     @PostMapping
-    public StudentDTO createStudent(@RequestBody StudentDTO studentDTO){
+    public ResponseEntity<StudentDTO> createStudent(@RequestBody StudentDTO studentDTO){
         StudentDTO createdStudentDTO = studentService.createStudent(studentDTO);
-        return ResponseEntity.ok(createdStudentDTO).getBody();
+        return (ResponseEntity<StudentDTO>) ResponseEntity.ok();
     }
 
     @PutMapping()
@@ -74,9 +75,36 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable long id){
-        studentService.delete(id);
+    public ResponseEntity<Void> deleteStudentID(@PathVariable long id) {
+        studentService.deleteStudentID(id);
         return ResponseEntity.ok().build();
     }
-
+    @GetMapping("/findNumberOfStudents")
+    public ResponseEntity<Long> findNumberOfStudents() {
+        Long numberStudents = studentService.findNumberOfStudents();
+        if (numberStudents == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(numberStudents);
+    }
+    @GetMapping("/findMiddleAgeStudents")
+    public ResponseEntity<Long> findMiddleAgeStudents() {
+        Long middleAge = studentService.findMiddleAgeStudents();
+        if (middleAge == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(middleAge);
+    }
+    @GetMapping("/findFiveYoungStudents")
+    ResponseEntity<List<StudentDTO>> findFiveYoungStudents() {
+        List<StudentDTO> youngestStudents = studentService.findFiveYoungStudents();
+        if (youngestStudents == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(youngestStudents) ;
+    }
+    @GetMapping("/findSizeAllStudent")
+    ResponseEntity<Page<Student>> findSizeAllStudent() {
+        return (ResponseEntity<Page<Student>>) studentService.findSizeAllStudent();
+    }
 }

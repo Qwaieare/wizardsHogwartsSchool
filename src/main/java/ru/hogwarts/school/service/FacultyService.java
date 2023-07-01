@@ -1,10 +1,8 @@
 package ru.hogwarts.school.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.dto.FacultyDTO;
-import ru.hogwarts.school.exceptions.NoSuchMusicEndpointException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
@@ -41,14 +39,14 @@ public class FacultyService {
     }
 
     // получить объект по ключу из репозитория
-    public FacultyDTO findFacultyById(long id) {
-        Faculty faculty = facultyRepository.findFacultyById(id);
+    public FacultyDTO findFacultyById(Long facultyId) {
+        Faculty faculty = facultyRepository.findFacultyById(facultyId);
         return FacultyDTO.fromFaculty(faculty);
     }
 
     // получить факультет по цвету
-    public List<FacultyDTO> findByColor(String color) {
-        List<Faculty> faculties = facultyRepository.findByColor();
+    public List<FacultyDTO> findFacultyByColor(String color) {
+        List<Faculty> faculties = facultyRepository.findFacultyByColor(color);
         List<FacultyDTO> facultyDTOS = new ArrayList<>();
         for (Faculty faculty : faculties) {
             FacultyDTO facultyDTO = FacultyDTO.fromFaculty(faculty);
@@ -68,9 +66,9 @@ public class FacultyService {
         return FacultyDTO.fromFaculty(faculty);
     }
 
-    // удаление из карты
-    public void delete(Long id){
-        facultyRepository.deleteById(id);
+    public void deleteFacultId(Long id) throws IllegalStateException {
+        Faculty faculty = facultyRepository.findFacultyById(id);
+        facultyRepository.delete(faculty);
     }
 
 }

@@ -29,7 +29,7 @@ public class Faculty {
     private String color;
 
     @OneToMany(mappedBy = "faculty", cascade = CascadeType.ALL)
-    private Collection<Student> students;
+    private List<Student> students;
 
 
 }

@@ -10,11 +10,10 @@ import ru.hogwarts.school.service.FacultyService;
 import java.util.List;
 
 @RestController
-@RequestMapping("faculty")
+@RequestMapping("/faculty")
 public class FacultyController {
     private final FacultyService facultyService;
-    @Autowired
-    public FacultyController(FacultyService facultyService) {
+     public FacultyController(FacultyService facultyService) {
         this.facultyService = facultyService;
     }
 
@@ -32,7 +31,7 @@ public class FacultyController {
     }
 
     @GetMapping
-    public ResponseEntity<List<FacultyDTO>> getAllFaculties() {
+    public ResponseEntity<List<FacultyDTO>> findAllFaculties() {
         List<FacultyDTO> facultyDTOS = facultyService.findAllFaculties();
         if (facultyDTOS == null) {
             return ResponseEntity.notFound().build();
@@ -40,18 +39,18 @@ public class FacultyController {
         return ResponseEntity.ok(facultyDTOS);
     }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Object> findFacultyById(@PathVariable long id){
-        Faculty facultyFound = facultyService.findFacultyById(id).toFaculty();
+    @GetMapping("/{facultyId}")
+    public ResponseEntity<Object> findFacultyById(@PathVariable Long facultyId){
+        Faculty facultyFound = facultyService.findFacultyById(facultyId).toFaculty();
         if (facultyFound == null){
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(facultyFound);
     }
 
-    @GetMapping(params = "color")
-    public ResponseEntity<List<FacultyDTO>> findByColor(@RequestParam String color){
-        List<FacultyDTO> facultyDTOS = facultyService.findByColor(color);
+    @GetMapping("/findByColor")
+    public ResponseEntity<List<FacultyDTO>> findFacultyByColor(@RequestParam String color){
+        List<FacultyDTO> facultyDTOS = facultyService.findFacultyByColor(color);
         if (facultyDTOS == null) {
             return ResponseEntity.notFound().build();
         }
@@ -77,8 +76,8 @@ public class FacultyController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteFaculty(@PathVariable long id){
-        facultyService.delete(id);
+    public ResponseEntity<Void> deleteFacultId(@PathVariable Long id){
+        facultyService.deleteFacultId(id);
         return ResponseEntity.ok().build();
     }
 }

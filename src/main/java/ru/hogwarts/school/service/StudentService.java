@@ -1,10 +1,12 @@
 package ru.hogwarts.school.service;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.dto.StudentDTO;
 import ru.hogwarts.school.model.Student;
-import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.*;
@@ -17,7 +19,7 @@ public class StudentService {
     private StudentRepository studentRepository;
 
     // создание объекта
-       public StudentDTO createStudent(StudentDTO studentDTO) {
+    public StudentDTO createStudent(StudentDTO studentDTO) {
         studentRepository.save(studentDTO.toStudent());
         return studentDTO;
     }
@@ -56,38 +58,56 @@ public class StudentService {
         return studentDTOByAge;
     }
 
-        // получить всех студентов, возраст которых находится в промежутке
-        public List<StudentDTO> findStudentByAgeBetween(int min, int max) {
-            List<Student> studentBetween = studentRepository.findStudentByAgeBetween(min, max);
-            List<StudentDTO> studentDTOBetween = new ArrayList<>();
-            for (Student student : studentBetween) {
-                StudentDTO studentDTO = StudentDTO.fromStudent(student);
-                studentDTOBetween.add(studentDTO);
-            }
-            return studentDTOBetween;
+    // получить всех студентов, возраст которых находится в промежутке
+    public List<StudentDTO> findStudentByAgeBetween(int min, int max) {
+        List<Student> studentBetween = studentRepository.findStudentByAgeBetween(min, max);
+        List<StudentDTO> studentDTOBetween = new ArrayList<>();
+        for (Student student : studentBetween) {
+            StudentDTO studentDTO = StudentDTO.fromStudent(student);
+            studentDTOBetween.add(studentDTO);
         }
+        return studentDTOBetween;
+    }
 
-        // найти студента по факультету
-        public List<StudentDTO> findStudentByFacultyId(long facultyId) {
-            List<Student> studentByFacultyId = studentRepository.findStudentByFaculty_Id(facultyId);
-            List<StudentDTO> studentDTOByFacultyId = new ArrayList<>();
-            for (Student student : studentByFacultyId) {
-                StudentDTO studentDTO = StudentDTO.fromStudent(student);
-                studentDTOByFacultyId.add(studentDTO);
-            }
-            return studentDTOByFacultyId;
+    // найти студента по факультету
+    public List<StudentDTO> findStudentByFacultyId(long facultyId) {
+        List<Student> studentByFacultyId = studentRepository.findStudentByFaculty_Id(facultyId);
+        List<StudentDTO> studentDTOByFacultyId = new ArrayList<>();
+        for (Student student : studentByFacultyId) {
+            StudentDTO studentDTO = StudentDTO.fromStudent(student);
+            studentDTOByFacultyId.add(studentDTO);
         }
+        return studentDTOByFacultyId;
+    }
 
 
     // удаление из карты
-    public void delete(long id)  throws IllegalStateException {
-            List<Student> studentDelete = studentRepository.deleteById();
-            List<StudentDTO> studentDTODelete = new ArrayList<>();
-            for (StudentDTO student : studentDTODelete) {
-                StudentDTO studentDTO = StudentDTO.fromStudent(student.toStudent());
-                studentDTODelete.remove(studentDTO);
-            }
+    public void deleteStudentID(long id) throws IllegalStateException {
+        studentRepository.findById(id);
+        List<StudentDTO> studentDTODelete = new ArrayList<>();
+        for (StudentDTO student : studentDTODelete) {
+            StudentDTO studentDTO = StudentDTO.fromStudent(student.toStudent());
+            studentDTODelete.remove(studentDTO);
+        }
     }
 
+    // получить количество всех студентов в школе
+    public Long findNumberOfStudents() {
+        return studentRepository.findNumberOfStudents();
+    }
+
+    // получить средний возраст студентов
+    public Long findMiddleAgeStudents() {
+        return studentRepository.findMiddleAgeStudents();
+    }
+
+    // получить пять самых молодых студентов
+    public List<StudentDTO> findFiveYoungStudents() {
+        return studentRepository.findFiveYoungStudents();
+    }
+    public Page<Student> findSizeAllStudent() {
+        Pageable pageable = PageRequest.of(0, 50);
+        return studentRepository.findAll(pageable);
+    }
 }
 
