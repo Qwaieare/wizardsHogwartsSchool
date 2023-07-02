@@ -41,13 +41,16 @@ public class StudentController {
         return ResponseEntity.ok(studentDTO);
     }
 
-    @GetMapping
-    public ResponseEntity<StudentDTO> findAllStudents(){
-        StudentDTO studentFindAll = (StudentDTO) studentService.findAllStudents();
-        return ResponseEntity.ok(studentFindAll);
+    @GetMapping()
+    public ResponseEntity<List<StudentDTO>> findAllStudents(){
+        List<StudentDTO> studentDTOS = studentService.findAllStudents();
+        if (studentDTOS == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(studentDTOS);
     }
 
-    @GetMapping(params = "age")
+    @GetMapping( "/age")
     public ResponseEntity<List<StudentDTO>> getStudentsByAge(@RequestParam Integer age){
         List<StudentDTO> studentDTOS = studentService.findStudentByAge(age);
         if (studentDTOS == null) {
@@ -103,8 +106,13 @@ public class StudentController {
         }
         return ResponseEntity.ok(youngestStudents) ;
     }
+
     @GetMapping("/findSizeAllStudent")
-    ResponseEntity<Page<Student>> findSizeAllStudent() {
-        return (ResponseEntity<Page<Student>>) studentService.findSizeAllStudent();
+    public ResponseEntity<List<StudentDTO>> findSizeAllStudent() {
+        List<StudentDTO> studentDTOS = studentService.findSizeAllStudent();
+        if (studentDTOS == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(studentDTOS);
     }
 }

@@ -105,9 +105,17 @@ public class StudentService {
     public List<StudentDTO> findFiveYoungStudents() {
         return studentRepository.findFiveYoungStudents();
     }
-    public Page<Student> findSizeAllStudent() {
+
+
+    public List<StudentDTO> findSizeAllStudent() {
         Pageable pageable = PageRequest.of(0, 50);
-        return studentRepository.findAll(pageable);
+        List<Student> students = studentRepository.findAll(pageable).getContent();
+        List<StudentDTO> studentDTOS = new ArrayList<>();
+        for (Student student : students) {
+            StudentDTO studentDTO = fromStudent(student);
+            studentDTOS.add(studentDTO);
+        }
+        return studentDTOS;
     }
 }
 
