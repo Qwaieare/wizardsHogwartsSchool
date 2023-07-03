@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import javax.persistence.*;
-import java.util.Objects;
 
 // Класс является сущностью
 // В БД отображается в таблицу с именем students
