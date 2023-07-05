@@ -26,5 +26,9 @@ public class Student {
     @ManyToOne(fetch = FetchType.LAZY)
     private Faculty faculty;
 
+    @OneToOne
+    @JoinColumn
+    private Avatar avatar;
+
 
 }
