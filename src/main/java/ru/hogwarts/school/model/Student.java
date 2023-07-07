@@ -24,10 +24,11 @@ public class Student {
     private int age;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "faculty_id", insertable = false, updatable = false, nullable = false)
     private Faculty faculty;
 
     @OneToOne
-    @JoinColumn
+    @JoinColumn(name = "avatar_id")
     private Avatar avatar;
 
 
