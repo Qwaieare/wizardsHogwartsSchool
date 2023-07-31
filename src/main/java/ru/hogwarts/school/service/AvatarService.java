@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,19 +31,22 @@ public class AvatarService {
 
     private final AvatarRepository avatarRepository;
     private final StudentService studentService;
+    private static final  Logger logger = LoggerFactory.getLogger(AvatarService.class);
 
     public AvatarService(AvatarRepository avatarRepository, StudentService studentService) {
         this.avatarRepository = avatarRepository;
         this.studentService = studentService;
     }
     public Optional<Avatar> findByStudentId(Long id) {
+        logger.info("Method findByStudentId was invoked");
         return avatarRepository.findByStudentId(id);
     }
 
-
     // метод для загрузки файлов
     public void uploadAvatar(Long id, MultipartFile file) throws Exception {
+        logger.info("Method uploadAvatar was invoked");
         Student student = studentService.findStudentById(id).toStudent();
+        logger.error("There is not file with id = " + id);
         Path filePath = Path.of(avatarsDir, id + " " +  getExtension(file.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
@@ -54,7 +59,6 @@ public class AvatarService {
         {
             bis.transferTo(bos);
         }
-
         Avatar avatar = avatarRepository.findByStudentId(id).orElse(new Avatar());
         avatar.setStudent(student);
         avatar.setFilePath(filePath.toString());
@@ -66,6 +70,7 @@ public class AvatarService {
 
     // вспомогательный метод, который помогает нам найти точку в строке
     private byte[] generateImageData(Path filePath) throws Exception {
+        logger.info("Method createPreview was invoked");
         try (InputStream is = Files.newInputStream(filePath);
         BufferedInputStream bis = new BufferedInputStream(is, 1024);
         ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
